@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Ali Çontarlı"
+            }
+        ],
+        "Category": "Utilities",
+        "Description": "Namaz vakitlerini KDE Plasma panelinizde ve masaüstünüzde takip edin",
+        "Description[en]": "Track prayer times on your KDE Plasma panel and desktop",
+        "Icon": "namaz-vakti",
+        "Id": "com.local.namazvakti",
+        "License": "GPL",
+        "Name": "Namaz Vakti KDE",
+        "Name[en]": "Namaz Vakti KDE",
+        "Version": "1.0.0",
+        "Website": "https://github.com/alicontarli/namazvakti-kde"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
