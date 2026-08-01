@@ -9,7 +9,7 @@ import "../code/Constants.js" as Constants
 ScrollView {
     id: root
 
-    property string cfg_viewMode: viewModeCombo.currentValue || "name-time"
+    property string cfg_viewMode: Plasmoid.configuration.viewMode
     property alias cfg_showImsak: showImsakCheck.checked
     property alias cfg_showGunes: showGunesCheck.checked
     property alias cfg_use24h: use24hCheck.checked
@@ -24,13 +24,7 @@ ScrollView {
     }
 
     onCfg_viewModeChanged: {
-        var modes = Constants.getViewModes(translate);
-        for (var i = 0; i < modes.length; i++) {
-            if (modes[i].id === cfg_viewMode) {
-                viewModeCombo.currentIndex = i;
-                break;
-            }
-        }
+        viewModeCombo.syncFromConfig();
     }
 
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -56,18 +50,25 @@ ScrollView {
                 textRole: "name"
                 valueRole: "id"
                 model: Constants.getViewModes(translate)
-                onCurrentValueChanged: {
-                    root.cfg_viewMode = currentValue;
-                }
-                Component.onCompleted: {
+
+                function syncFromConfig() {
                     var modes = Constants.getViewModes(translate);
                     for (var i = 0; i < modes.length; i++) {
-                        if (modes[i].id === Plasmoid.configuration.viewMode) {
-                            currentIndex = i;
-                            break;
+                        if (modes[i].id === root.cfg_viewMode) {
+                            if (currentIndex !== i) currentIndex = i;
+                            return;
                         }
                     }
                 }
+
+                onActivated: function(index) {
+                    var modes = Constants.getViewModes(translate);
+                    if (modes[index] && modes[index].id) {
+                        root.cfg_viewMode = modes[index].id;
+                    }
+                }
+
+                Component.onCompleted: syncFromConfig()
             }
 
             CheckBox {

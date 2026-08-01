@@ -8,21 +8,15 @@ import "../code/Translations.js" as Translations
 ScrollView {
     id: root
 
-    property string cfg_language: languageCombo.currentValue || "auto"
+    property string cfg_language: Plasmoid.configuration.language
 
-    readonly property string currentLanguage: Plasmoid.configuration.language
+    readonly property string currentLanguage: cfg_language || Plasmoid.configuration.language
     function translate(str) {
         return Translations.translate(str, currentLanguage);
     }
 
     onCfg_languageChanged: {
-        var langs = getLanguagesList();
-        for (var i = 0; i < langs.length; i++) {
-            if (langs[i].id === cfg_language) {
-                languageCombo.currentIndex = i;
-                break;
-            }
-        }
+        languageCombo.syncFromConfig();
     }
 
     function getLanguagesList() {
@@ -65,17 +59,29 @@ ScrollView {
                 textRole: "name"
                 valueRole: "id"
                 model: root.getLanguagesList()
-                onCurrentValueChanged: {
-                    root.cfg_language = currentValue;
-                }
-                Component.onCompleted: {
+
+                function syncFromConfig() {
+                    var targetId = root.cfg_language || "auto";
                     var langs = root.getLanguagesList();
                     for (var i = 0; i < langs.length; i++) {
-                        if (langs[i].id === Plasmoid.configuration.language) {
-                            currentIndex = i;
-                            break;
+                        if (langs[i].id === targetId) {
+                            if (currentIndex !== i) {
+                                currentIndex = i;
+                            }
+                            return;
                         }
                     }
+                }
+
+                onActivated: function(index) {
+                    var langs = root.getLanguagesList();
+                    if (langs[index] && langs[index].id) {
+                        root.cfg_language = langs[index].id;
+                    }
+                }
+
+                Component.onCompleted: {
+                    syncFromConfig();
                 }
             }
         }

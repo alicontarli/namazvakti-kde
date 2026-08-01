@@ -8,11 +8,11 @@ import "../code/Translations.js" as Translations
 ScrollView {
     id: root
     
-    property string cfg_locationMode: locationModeCombo.currentValue || "city"
+    property string cfg_locationMode: Plasmoid.configuration.locationMode
     property alias cfg_city: cityField.text
     property alias cfg_country: countryField.text
-    property real cfg_latitude: 41.0082
-    property real cfg_longitude: 28.9784
+    property real cfg_latitude: Plasmoid.configuration.latitude
+    property real cfg_longitude: Plasmoid.configuration.longitude
 
     readonly property string currentLanguage: Plasmoid.configuration.language
     function translate(str) {
@@ -34,11 +34,7 @@ ScrollView {
     }
 
     onCfg_locationModeChanged: {
-        if (cfg_locationMode === "coords") {
-            locationModeCombo.currentIndex = 1;
-        } else {
-            locationModeCombo.currentIndex = 0;
-        }
+        locationModeCombo.syncFromConfig();
     }
 
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -67,9 +63,20 @@ ScrollView {
                     { text: translate("City and Country"), value: "city" },
                     { text: translate("Geographic Coordinates (Latitude / Longitude)"), value: "coords" }
                 ]
-                onCurrentValueChanged: {
-                    root.cfg_locationMode = currentValue;
+
+                function syncFromConfig() {
+                    if (root.cfg_locationMode === "coords") {
+                        if (currentIndex !== 1) currentIndex = 1;
+                    } else {
+                        if (currentIndex !== 0) currentIndex = 0;
+                    }
                 }
+
+                onActivated: function(index) {
+                    root.cfg_locationMode = (index === 1) ? "coords" : "city";
+                }
+
+                Component.onCompleted: syncFromConfig()
             }
             
             Kirigami.Separator {

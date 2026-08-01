@@ -9,8 +9,8 @@ import "../code/Constants.js" as Constants
 ScrollView {
     id: root
 
-    property string cfg_calculationMethod: calculationMethodCombo.currentValue || "13"
-    property string cfg_school: schoolCombo.currentValue || "0"
+    property string cfg_calculationMethod: Plasmoid.configuration.calculationMethod
+    property string cfg_school: Plasmoid.configuration.school
     
     property alias cfg_imsakAdjustment: imsakAdj.value
     property alias cfg_gunesAdjustment: gunesAdj.value
@@ -25,23 +25,11 @@ ScrollView {
     }
 
     onCfg_calculationMethodChanged: {
-        var methods = Constants.getCalculationMethods(translate);
-        for (var i = 0; i < methods.length; i++) {
-            if (methods[i].id === cfg_calculationMethod) {
-                calculationMethodCombo.currentIndex = i;
-                break;
-            }
-        }
+        calculationMethodCombo.syncFromConfig();
     }
 
     onCfg_schoolChanged: {
-        var schools = Constants.getJurisprudenceSchools(translate);
-        for (var i = 0; i < schools.length; i++) {
-            if (schools[i].id === cfg_school) {
-                schoolCombo.currentIndex = i;
-                break;
-            }
-        }
+        schoolCombo.syncFromConfig();
     }
     
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -78,18 +66,25 @@ ScrollView {
                 textRole: "name"
                 valueRole: "id"
                 model: Constants.getCalculationMethods(translate)
-                onCurrentValueChanged: {
-                    root.cfg_calculationMethod = currentValue;
-                }
-                Component.onCompleted: {
+
+                function syncFromConfig() {
                     var methods = Constants.getCalculationMethods(translate);
                     for (var i = 0; i < methods.length; i++) {
-                        if (methods[i].id === Plasmoid.configuration.calculationMethod) {
-                            currentIndex = i;
-                            break;
+                        if (methods[i].id === root.cfg_calculationMethod) {
+                            if (currentIndex !== i) currentIndex = i;
+                            return;
                         }
                     }
                 }
+
+                onActivated: function(index) {
+                    var methods = Constants.getCalculationMethods(translate);
+                    if (methods[index] && methods[index].id) {
+                        root.cfg_calculationMethod = methods[index].id;
+                    }
+                }
+
+                Component.onCompleted: syncFromConfig()
             }
 
             ComboBox {
@@ -98,18 +93,25 @@ ScrollView {
                 textRole: "name"
                 valueRole: "id"
                 model: Constants.getJurisprudenceSchools(translate)
-                onCurrentValueChanged: {
-                    root.cfg_school = currentValue;
-                }
-                Component.onCompleted: {
+
+                function syncFromConfig() {
                     var schools = Constants.getJurisprudenceSchools(translate);
                     for (var i = 0; i < schools.length; i++) {
-                        if (schools[i].id === Plasmoid.configuration.school) {
-                            currentIndex = i;
-                            break;
+                        if (schools[i].id === root.cfg_school) {
+                            if (currentIndex !== i) currentIndex = i;
+                            return;
                         }
                     }
                 }
+
+                onActivated: function(index) {
+                    var schools = Constants.getJurisprudenceSchools(translate);
+                    if (schools[index] && schools[index].id) {
+                        root.cfg_school = schools[index].id;
+                    }
+                }
+
+                Component.onCompleted: syncFromConfig()
             }
 
             Kirigami.Separator {
