@@ -76,7 +76,12 @@ var LOCALES = {
         "Icon + Prayer name + Remaining time": "Simge + vakit adı + kalan süre",
         "Prayer name + Remaining time": "Vakit adı + kalan süre",
         "Only remaining time": "Sadece kalan süre",
-        "Only icon": "Sadece simge"
+        "Only icon": "Sadece simge",
+        "Other / Custom Entry...": "Diğer / Özel Giriş...",
+        "Other / Custom...": "Diğer / Özel...",
+        "Today's Prayer Times (Preview)": "Bugünün Namaz Vakitleri (Önizleme)",
+        "Custom Country": "Özel Ülke",
+        "Custom City": "Özel Şehir"
     },
     "ar": {
         "Namaz Vakti Gnome": "Namaz Vakti Gnome",

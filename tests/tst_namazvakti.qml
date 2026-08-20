@@ -7,6 +7,7 @@ import "../package/contents/code/Formatter.js" as Formatter
 import "../package/contents/code/Validation.js" as Validation
 import "../package/contents/code/Translations.js" as Translations
 import "../package/contents/code/Cache.js" as Cache
+import "../package/contents/code/LocationData.js" as LocationData
 
 TestCase {
     name: "NamazVaktiTests"
@@ -251,5 +252,30 @@ TestCase {
         var now = Date.now();
         var millisToNextMinute = 60000 - (now % 60000);
         verify(millisToNextMinute > 0 && millisToNextMinute <= 60000);
+    }
+
+    // 29. LocationData ülke ve şehir listelerinin eksiksizliği (Örn: Türkiye 81 il).
+    function test_29_location_presets() {
+        var countries = LocationData.getCountries();
+        verify(countries.length > 20);
+        
+        var turkeyCities = LocationData.getCitiesForCountry("Turkey");
+        // 81 provinces + "Other / Custom..." = 82
+        compare(turkeyCities.length, 82);
+        verify(turkeyCities.indexOf("İstanbul") !== -1);
+        verify(turkeyCities.indexOf("Ankara") !== -1);
+        verify(turkeyCities.indexOf("İzmir") !== -1);
+    }
+
+    // 30. LocationData ülke ve şehir eşleme indeks araması.
+    function test_30_location_search_lookup() {
+        var trIdx = LocationData.findCountryIndex("Turkey");
+        compare(trIdx, 0);
+        
+        var istIdx = LocationData.findCityIndex("Turkey", "İstanbul");
+        verify(istIdx >= 0);
+        
+        var nonExistentIdx = LocationData.findCityIndex("Turkey", "NonExistentCityXYZ");
+        compare(nonExistentIdx, -1);
     }
 }
