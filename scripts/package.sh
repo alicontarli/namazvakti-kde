@@ -31,7 +31,11 @@ cd package
 python3 -c "import zipfile, os; zipf = zipfile.ZipFile('../dist/namaz-vakti-kde-${VERSION}.plasmoid', 'w', zipfile.ZIP_DEFLATED); [zipf.write(os.path.join(r, f), os.path.relpath(os.path.join(r, f), '.')) for r, d, files in os.walk('.') for f in files]"
 cd ..
 cp "dist/namaz-vakti-kde-${VERSION}.plasmoid" "dist/namaz-vakti-kde-${VERSION}.zip"
+rsvg-convert -w 512 -h 512 package/contents/icons/namaz-vakti.svg -o dist/logo.png
+cp dist/logo.png ./logo.png
 
 echo "Package created successfully at:"
 echo "  dist/namaz-vakti-kde-${VERSION}.plasmoid"
 echo "  dist/namaz-vakti-kde-${VERSION}.zip"
+echo "  dist/logo.png"
+echo "  logo.png"
