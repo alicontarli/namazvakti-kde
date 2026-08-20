@@ -15,4 +15,9 @@ else
     kpackagetool6 --type Plasma/Applet --install package
 fi
 
+# Install app icon to user icon theme for Plasma widget explorer
+mkdir -p ~/.local/share/icons/hicolor/scalable/apps/
+cp package/contents/icons/namaz-vakti.svg ~/.local/share/icons/hicolor/scalable/apps/namaz-vakti.svg
+cp package/contents/icons/namaz-vakti.svg ~/.local/share/icons/hicolor/scalable/apps/com.local.namazvakti.svg
+
 echo "Installation completed successfully."
