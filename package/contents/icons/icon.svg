@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="256" height="256" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Circle Soft Gradient (Dark Islamic Teal/Forest Background for logo) -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f382c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#061e17;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Rich Emerald Green Vibrant Gradient for Crescent -->
+    <linearGradient id="greenCrescentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#48e68b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Warm Golden / Soft White Gradient for Star and Accent -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef08a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Subtle Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Circular background badge -->
+  <circle cx="128" cy="128" r="118" fill="url(#bgGrad)" stroke="#10b981" stroke-width="3" stroke-opacity="0.4" />
+  
+  <!-- Outer glowing subtle ring -->
+  <circle cx="128" cy="128" r="110" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,6" stroke-opacity="0.35" />
+
+  <!-- Beautiful Emerald Green Crescent Moon -->
+  <path d="M 128,38 C 177.7,38 218,78.3 218,128 C 218,177.7 177.7,218 128,218 C 104.5,218 83.1,209 67,194.2 C 84.8,202 104.9,206.5 126,206.5 C 169.4,206.5 204.5,171.4 204.5,128 C 204.5,84.6 169.4,49.5 126,49.5 C 104.9,49.5 84.8,54 67,61.8 C 83.1,47 104.5,38 128,38 Z" fill="url(#greenCrescentGrad)" filter="url(#glow)" />
+
+  <!-- Elegant 8-pointed Islamic Star inside crescent -->
+  <g transform="translate(142, 102) scale(1.15)">
+    <!-- Star Path -->
+    <polygon points="0,-24 7,-7 24,0 7,7 0,24 -7,7 -24,0 -7,-7" fill="url(#goldGrad)" />
+    <polygon points="0,-17 5,-5 17,0 5,5 0,17 -5,5 -17,0 -5,-5" fill="#ffffff" opacity="0.8" transform="rotate(45)" />
+    <circle cx="0" cy="0" r="3.5" fill="#ffffff" />
+  </g>
+
+  <!-- Stylized Elegant Minaret/Dome Silhouette base inside crescent -->
+  <path d="M 98,172 C 98,150 110,140 128,140 C 146,140 158,150 158,172 L 158,184 L 98,184 Z" fill="#ffffff" opacity="0.9" />
+  <path d="M 128,124 L 131,136 L 125,136 Z" fill="url(#goldGrad)" />
+  <circle cx="128" cy="120" r="3" fill="url(#goldGrad)" />
+</svg>
