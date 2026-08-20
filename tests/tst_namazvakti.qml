@@ -278,4 +278,45 @@ TestCase {
         var nonExistentIdx = LocationData.findCityIndex("Turkey", "NonExistentCityXYZ");
         compare(nonExistentIdx, -1);
     }
+
+    // 31. AutoComplete harf filtreleme ve Türkçe karakter normalizasyonu.
+    function test_31_autocomplete_filter() {
+        var turkeyCities = LocationData.getCitiesForCountry("Turkey");
+        
+        // "ist" -> ["İstanbul"]
+        var filteredIst = LocationData.filterCandidates("ist", turkeyCities);
+        verify(filteredIst.length > 0);
+        compare(filteredIst[0], "İstanbul");
+        
+        // "ank" -> ["Ankara"]
+        var filteredAnk = LocationData.filterCandidates("ank", turkeyCities);
+        verify(filteredAnk.length > 0);
+        compare(filteredAnk[0], "Ankara");
+
+        // "diyar" -> ["Diyarbakır"]
+        var filteredDiy = LocationData.filterCandidates("diyar", turkeyCities);
+        verify(filteredDiy.length > 0);
+        compare(filteredDiy[0], "Diyarbakır");
+    }
+
+    // 32. AutoComplete en yakın uyuşan seçeneği otomatik tamamlama (Best Match).
+    function test_32_autocomplete_best_match() {
+        var turkeyCities = LocationData.getCitiesForCountry("Turkey");
+        
+        // "istan" -> "İstanbul"
+        var matchIst = LocationData.getBestMatch("istan", turkeyCities);
+        compare(matchIst, "İstanbul");
+
+        // "izmir" -> "İzmir"
+        var matchIzm = LocationData.getBestMatch("izmir", turkeyCities);
+        compare(matchIzm, "İzmir");
+
+        // "eskisehir" -> "Eskişehir"
+        var matchEsk = LocationData.getBestMatch("eskisehir", turkeyCities);
+        compare(matchEsk, "Eskişehir");
+
+        // "BilinmeyenKoy123" (Listede yoksa kullanıcının yazdığını koruma)
+        var matchCustom = LocationData.getBestMatch("BilinmeyenKoy123", turkeyCities);
+        compare(matchCustom, "BilinmeyenKoy123");
+    }
 }

@@ -47,45 +47,6 @@ ScrollView {
         locationModeCombo.syncFromConfig();
     }
 
-    onCfg_countryChanged: {
-        syncDropdownsFromConfig();
-    }
-
-    onCfg_cityChanged: {
-        syncDropdownsFromConfig();
-    }
-
-    function syncDropdownsFromConfig() {
-        var cIdx = LocationData.findCountryIndex(root.cfg_country);
-        if (cIdx !== -1) {
-            if (countryCombo.currentIndex !== cIdx) {
-                countryCombo.currentIndex = cIdx;
-            }
-            var countryId = LocationData.getCountries(translate)[cIdx].id;
-            var cityList = LocationData.getCitiesForCountry(countryId, translate);
-            cityCombo.model = cityList;
-            
-            var cityIdx = LocationData.findCityIndex(countryId, root.cfg_city);
-            if (cityIdx !== -1) {
-                if (cityCombo.currentIndex !== cityIdx) {
-                    cityCombo.currentIndex = cityIdx;
-                }
-            } else {
-                // Custom city in this country
-                cityCombo.currentIndex = cityList.length - 1; // "Other / Custom..."
-                customCityField.text = root.cfg_city;
-            }
-        } else {
-            // Custom country
-            var countries = LocationData.getCountries(translate);
-            countryCombo.currentIndex = countries.length - 1; // "Other / Custom Entry..."
-            cityCombo.model = [translate("Other / Custom...")];
-            cityCombo.currentIndex = 0;
-            customCountryField.text = root.cfg_country;
-            customCityField.text = root.cfg_city;
-        }
-    }
-
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
@@ -133,81 +94,43 @@ ScrollView {
                 Kirigami.FormData.label: translate("Location Settings")
             }
 
-            // Country Dropdown
-            ComboBox {
-                id: countryCombo
+            // Searchable Country Field (Typeahead + Dropdown + Best-Match Auto-complete)
+            AutoCompleteField {
+                id: countryField
                 Kirigami.FormData.label: translate("Country")
                 visible: root.cfg_locationMode === "city"
+                placeholderText: "e.g. Turkey"
+                text: root.cfg_country
+                candidates: LocationData.getCountries(root.translate)
                 textRole: "name"
                 valueRole: "id"
-                model: LocationData.getCountries(root.translate)
 
-                onActivated: function(index) {
-                    var countries = LocationData.getCountries(root.translate);
-                    var selected = countries[index];
-                    if (selected.id === "custom") {
-                        root.cfg_country = customCountryField.text || "";
-                        cityCombo.model = [root.translate("Other / Custom...")];
-                        cityCombo.currentIndex = 0;
-                        root.cfg_city = customCityField.text || "";
-                    } else {
-                        root.cfg_country = selected.id;
-                        var cities = LocationData.getCitiesForCountry(selected.id, root.translate);
-                        cityCombo.model = cities;
-                        cityCombo.currentIndex = 0;
-                        if (cities.length > 1) {
-                            root.cfg_city = cities[0];
+                onCommitted: function(newCountry) {
+                    root.cfg_country = newCountry;
+                    // Update city candidates for the newly selected country
+                    var cities = LocationData.getCitiesForCountry(newCountry, root.translate);
+                    cityField.candidates = cities;
+                    // If current city is empty or not matching, select first city
+                    if (cities.length > 0 && (!root.cfg_city || cities.indexOf(root.cfg_city) === -1)) {
+                        var firstCity = (typeof cities[0] === 'object') ? cities[0].name : cities[0];
+                        if (firstCity && firstCity.indexOf("...") === -1) {
+                            root.cfg_city = firstCity;
                         }
                     }
                 }
             }
 
-            // City Dropdown
-            ComboBox {
-                id: cityCombo
+            // Searchable City Field (Typeahead + Dropdown + Best-Match Auto-complete)
+            AutoCompleteField {
+                id: cityField
                 Kirigami.FormData.label: translate("City")
                 visible: root.cfg_locationMode === "city"
-                model: LocationData.getCitiesForCountry("Turkey", root.translate)
-
-                onActivated: function(index) {
-                    var isCustom = (index === model.length - 1);
-                    if (isCustom) {
-                        root.cfg_city = customCityField.text || "";
-                    } else {
-                        root.cfg_city = model[index];
-                    }
-                }
-
-                Component.onCompleted: {
-                    root.syncDropdownsFromConfig();
-                }
-            }
-
-            // Custom Country TextField (Visible if custom country selected)
-            TextField {
-                id: customCountryField
-                Kirigami.FormData.label: translate("Custom Country")
-                visible: root.cfg_locationMode === "city" && countryCombo.currentIndex === (countryCombo.count - 1)
-                placeholderText: "e.g. Turkey"
-                text: root.cfg_country
-                onTextChanged: {
-                    if (visible) {
-                        root.cfg_country = text;
-                    }
-                }
-            }
-
-            // Custom City TextField (Visible if custom city or custom country selected)
-            TextField {
-                id: customCityField
-                Kirigami.FormData.label: translate("Custom City")
-                visible: root.cfg_locationMode === "city" && (cityCombo.currentIndex === (cityCombo.count - 1) || countryCombo.currentIndex === (countryCombo.count - 1))
                 placeholderText: "e.g. İstanbul"
                 text: root.cfg_city
-                onTextChanged: {
-                    if (visible) {
-                        root.cfg_city = text;
-                    }
+                candidates: LocationData.getCitiesForCountry(root.cfg_country, root.translate)
+
+                onCommitted: function(newCity) {
+                    root.cfg_city = newCity;
                 }
             }
 

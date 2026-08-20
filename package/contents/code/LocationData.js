@@ -227,3 +227,85 @@ function findCityIndex(countryId, cityName) {
     }
     return -1;
 }
+
+function normalizeStr(str) {
+    if (!str) return "";
+    return str.toString().toLowerCase()
+        .replace(/i̇/g, "i")
+        .replace(/İ/g, "i")
+        .replace(/I/g, "i")
+        .replace(/ı/g, "i")
+        .replace(/ğ/g, "g")
+        .replace(/Ğ/g, "g")
+        .replace(/ü/g, "u")
+        .replace(/Ü/g, "u")
+        .replace(/ş/g, "s")
+        .replace(/Ş/g, "s")
+        .replace(/ö/g, "o")
+        .replace(/Ö/g, "o")
+        .replace(/ç/g, "c")
+        .replace(/Ç/g, "c")
+        .trim();
+}
+
+function filterCandidates(query, list) {
+    if (!list || list.length === 0) return [];
+    if (!query || query.trim() === "") return list;
+    var normQ = normalizeStr(query);
+    
+    var startsWithList = [];
+    var containsList = [];
+    
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var name = (typeof item === 'object' && item !== null && item.name) ? item.name : item.toString();
+        var normName = normalizeStr(name);
+        
+        if (normName.indexOf(normQ) === 0) {
+            startsWithList.push(item);
+        } else if (normName.indexOf(normQ) !== -1) {
+            containsList.push(item);
+        }
+    }
+    
+    return startsWithList.concat(containsList);
+}
+
+function getBestMatch(input, list) {
+    if (!input || input.trim() === "") return "";
+    if (!list || list.length === 0) return input;
+    
+    var normInput = normalizeStr(input);
+    
+    // 1. Exact match
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var name = (typeof item === 'object' && item !== null && item.name) ? item.name : item.toString();
+        var id = (typeof item === 'object' && item !== null && item.id) ? item.id : name;
+        if (normalizeStr(name) === normInput || normalizeStr(id) === normInput) {
+            return (typeof item === 'object' && item !== null && item.id) ? item.id : name;
+        }
+    }
+    
+    // 2. Starts with
+    for (var j = 0; j < list.length; j++) {
+        var itemJ = list[j];
+        var nameJ = (typeof itemJ === 'object' && itemJ !== null && itemJ.name) ? itemJ.name : itemJ.toString();
+        var idJ = (typeof itemJ === 'object' && itemJ !== null && itemJ.id) ? itemJ.id : nameJ;
+        if (normalizeStr(nameJ).indexOf(normInput) === 0 || normalizeStr(idJ).indexOf(normInput) === 0) {
+            return (typeof itemJ === 'object' && itemJ !== null && itemJ.id) ? itemJ.id : nameJ;
+        }
+    }
+    
+    // 3. Contains
+    for (var k = 0; k < list.length; k++) {
+        var itemK = list[k];
+        var nameK = (typeof itemK === 'object' && itemK !== null && itemK.name) ? itemK.name : itemK.toString();
+        var idK = (typeof itemK === 'object' && itemK !== null && itemK.id) ? itemK.id : nameK;
+        if (normalizeStr(nameK).indexOf(normInput) !== -1 || normalizeStr(idK).indexOf(normInput) !== -1) {
+            return (typeof itemK === 'object' && itemK !== null && itemK.id) ? itemK.id : nameK;
+        }
+    }
+    
+    return input;
+}
