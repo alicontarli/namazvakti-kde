@@ -1,5 +1,9 @@
 # Namaz Vakti KDE
 
+> [!NOTE]
+> **This repository has been archived. Active development has moved to:**
+> **https://github.com/alicontarli/namazvakti**
+
 A simple, lightweight, and modern KDE Plasma 6 plasmoid (panel applet) that displays the next Islamic prayer time and its remaining countdown directly in the system status area.
 
 This project is the KDE Plasma 6 port of the **Namaz Vakti GNOME** extension, rebuilt from scratch as a native Plasma applet.
